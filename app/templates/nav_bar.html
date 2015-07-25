@@ -1,0 +1,25 @@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+
+        <div class="navbar-header">
+            <h3 class="navbar-text navbar-left">My Porter Beer List</h3>
+        </div>
+
+        {% if current_user.is_authenticated() %}
+
+        <a href="{{ url_for('logout') }}" class="btn btn-default navbar-btn navbar-right" style="margin-right:10px">Sign
+            Out</a>
+
+        <p class="navbar-text navbar-right" style="margin-right:10px">Signed in as {{current_user.UserName}}</p>
+
+        {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-default navbar-btn navbar-right" style="margin-right:10px">Sign
+            in</a>
+
+        {% endif %}
+
+    </div>
+
+</nav>
+
+

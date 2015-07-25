@@ -1,0 +1,41 @@
+__author__ = 'johnedenfield'
+
+from lxml import html
+import requests
+from datetime import datetime
+from app.models import db, BeerListUpdate, BeerList
+
+
+## Need to figure out how to get this to run on  daily bases. for now this is broken.
+
+r = requests.get('http://www.theporterbeerbar.com/drink/beer')
+tree =html.fromstring(r.text)
+beertable =tree.find_class("beerListTable")
+
+data=[]
+today=datetime.now()
+
+beer_list_update=BeerListUpdate(DateAndTime=datetime.utcnow())
+db.session.add(beer_list_update)
+db.session.commit()
+
+for tr in beertable[0].iter(tag="tr"):
+
+    if tr[0].tag == 'td':
+        beer = tr[1][0].text
+        brewery = tr[0].text
+        id=''.join(e for e in brewery + beer if e.isalnum()).upper()
+
+        data.append(BeerList(Update_ID = beer_list_update.ID , Beer_ID =id, Brewery = tr[0].text, Beer = tr[1][0].text, Style =tr[2].text,
+                Origin =tr[3].text, Volume=tr[4].text, ABV =tr[5].text, Description = tr[6].text))
+
+
+db.session.add_all(data)
+db.session.commit()
+
+
+
+
+
+
+

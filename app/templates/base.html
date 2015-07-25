@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css')}}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap/css/custom.css')}}">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js')}}"></script>
+
+    {% block head %}
+        <title>{% block title %}{% endblock %} - My Webpage</title>
+    {% endblock %}
+</head>
+<body>
+    <div class="container">
+    {% include "nav_bar.html" %}
+    </div>
+    <div class="container">
+    {% block content %}{% endblock %}
+    </div>
+    <div id="footer">
+    {% block footer %}{% endblock %}
+    </div>
+
+</body>
+</html>

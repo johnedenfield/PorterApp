@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %} Beer List {% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-default">
+    <div class="container-fluid">
+        <div class="xtra_margin">
+            <div class="row">
+
+                <div class="col-md-12">
+                    <a href="{{ url_for('beer_list') }}" class=" btn btn-default"> Back
+                        <span class="glyphicon glyphicon-circle-arrow-left"></span>
+                    </a>
+                </div>
+
+                <div class="col-md-12">
+
+                    <h3>{{beer.Brewery}}:<em>{{beer.Beer}}</em></h3>
+                     <hr>
+                </div>
+
+                <div class="col-md-2">Description</div>
+                <div class="col-md-10">{{beer.Description}}</div>
+
+
+                <div class="col-md-2">Style</div>
+                <div class="col-md-10">{{beer.Style}}</div>
+
+
+                <div class="col-md-2">Origin</div>
+                <div class="col-md-10">{{beer.Origin}}</div>
+
+                <div class="col-md-2">Volume</div>
+                <div class="col-md-10">{{beer.Volume}}</div>
+
+                <div class="col-md-2">ABV</div>
+                <div class="col-md-10">{{beer.ABV}}</div>
+
+
+                <div class="col-md-12" style="margin-top:25px">
+                    <a href="{{url_for('rate_beer', Beer_ID=beer.Beer_ID)}}" class=" btn btn-default"> Rate
+                     <span class="glyphicon glyphicon-thumbs-up"></span>
+                    </a>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

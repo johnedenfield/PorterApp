@@ -1,0 +1,16 @@
+/*
+Custom CSS for the My Beer Site
+
+*/
+
+/* Table */
+table, th {
+
+    text-align:center;
+
+}
+
+div.xtra_margin {
+
+    margin:25px;
+    }

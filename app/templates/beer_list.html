@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %} Beer List {% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-default">
+
+
+    <div class="xtra_margin">
+
+        <table class="table table-striped">
+        <thead>
+        <tr >
+            <th> Beer </th>
+            <th> Brewery </th>
+            <th> My Rating </th>
+            <th> Number of Ratings </th>
+            <th> Number of Ratings </th>
+        </tr>
+     </thead>
+    {% for beer in mybeerlist %}
+        <tr>
+            <td><a href="{{url_for('beer_info', Beer_ID=beer['Beer_ID'])}}">{{beer['Beer']}}</a></td>
+            <td>{{beer['Brewery']}}</td>
+            <td>{{beer['UserRating']}}</td>
+            <td>{{beer['UserRateCnt']}} </td>
+            <td> <a href="{{url_for('rate_beer', Beer_ID=beer.Beer_ID)}}" class=" btn btn-default"> Rate
+                     <span class="glyphicon glyphicon-thumbs-up"></span>
+                    </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+      <p> <em> Last Updated on: {{updated.DateAndTime}} </em></p>
+    </div>
+</div>
+{% endblock %}

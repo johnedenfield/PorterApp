@@ -1,0 +1,9 @@
+#Files
+*.pyc
+.idea/*
+
+#Database files
+*.db
+
+# OS Files
+*.DS_Store

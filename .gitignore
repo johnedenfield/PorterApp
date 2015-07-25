@@ -1,6 +1,8 @@
 #Files
 *.pyc
 .idea/*
+env/*
+config.py
 
 #Database files
 *.db

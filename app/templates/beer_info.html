@@ -6,49 +6,75 @@
 
 {% block content %}
 <div class="panel panel-default">
-    <div class="container-fluid">
-        <div class="xtra_margin">
+
+    <div class="xtra_margin">
+
+        <a href="{{url_for('rate_beer', Beer_ID=beer.Beer_ID)}}" class=" btn btn-default"> Rate
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+        </a>
+
+        <h3>{{beer.Brewery}}:<em>{{beer.Beer}}</em></h3>
 
 
-            <a href="{{ url_for('beer_list') }}" class=" btn btn-default"> Back
+        <p><strong>Description: </strong>{{beer.Description}}</p>
+
+        <table class="table table-striped">
+            <tr>
+                <td>Style</td>
+                <td>{{beer.Style}}</td>
+            </tr>
+            <tr>
+                <td>Origin</td>
+                <td>{{beer.Origin}}</td>
+            </tr>
+            <tr>
+                <td>Volume</td>
+                <td>{{beer.Volume}}</td>
+            </tr>
+            <tr>
+                <td>ABV</td>
+                <td>{{beer.ABV}}</td>
+            </tr>
+        </table>
+
+           <a href="{{ url_for('beer_list') }}" class=" btn btn-default"> Back
                 <span class="glyphicon glyphicon-circle-arrow-left"></span>
             </a>
 
-            <h3>{{beer.Brewery}}:<em>{{beer.Beer}}</em></h3>
-
-
-            <p><strong>Description: </strong>{{beer.Description}}</p>
-
-            <table class="table table-striped">
-                <tr>
-                    <td>Style</td>
-                    <td>{{beer.Style}}</td>
-                </tr>
-                <tr>
-                    <td>Origin</td>
-                    <td>{{beer.Origin}}</td>
-                </tr>
-                <tr>
-                    <td>Volume</td>
-                    <td>{{beer.Volume}}</td>
-                </tr>
-                <tr>
-                    <td>ABV</td>
-                    <td>{{beer.ABV}}</td>
-                </tr>
-            </table>
-
-
-            <div class="col-md-12" style="margin-top:25px">
-                <a href="{{url_for('rate_beer', Beer_ID=beer.Beer_ID)}}" class=" btn btn-default"> Rate
-                    <span class="glyphicon glyphicon-thumbs-up"></span>
-                </a>
-
-            </div>
-
-
-        </div>
     </div>
+
+</div>
+
+<div class="panel panel-default">
+    <div class="xtra_margin">
+        <h3>Previous Ratings</h3>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th> DateAndTime</th>
+                <th> My Rating</th>
+                <th> Remove</th>
+            </tr>
+            </thead>
+            {% for rating in myratings %}
+            <tr>
+                <td>{{rating.DateAndTime | datetimeformat }}</td>
+                <td>{{rating.Rating}}</td>
+                <td>
+                    <form method=post action="{{url_for('delete_rating',Beer_ID=beer.Beer_ID)}}">
+                        {{delete_form[loop.index0].hidden_tag()}}
+                        {{delete_form[loop.index0].id()}}
+                        <button class="btn btn-default" type="submit" value="Delete">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
 </div>
 
 {% endblock %}

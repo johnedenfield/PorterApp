@@ -25,43 +25,12 @@
              <button class=" btn btn-default"> Rate
                      <span class="glyphicon glyphicon-thumbs-up"></span>
              </button>
-            <a href="{{ url_for('beer_list') }}" class=" btn btn-default pull-right">Cancel
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+               <a href="{{ url_for('beer_list') }}" class=" btn btn-default pull-right"> Back
+                <span class="glyphicon glyphicon-circle-arrow-left"></span>
             </a>
         </form>
 
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="xtra_margin">
-        <h3>Previous Ratings</h3>
-
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th> DateAndTime</th>
-                <th> My Rating</th>
-                <th> Remove</th>
-            </tr>
-            </thead>
-            {% for rating in myratings %}
-            <tr>
-                <td>{{rating.DateAndTime}}</td>
-                <td>{{rating.Rating}}</td>
-                <td>
-                    <form method=post action="{{url_for('delete_rating',Beer_ID=beer.Beer_ID)}}">
-                        {{delete_form[loop.index0].hidden_tag()}}
-                        {{delete_form[loop.index0].id()}}
-                        <button class="btn btn-default" type="submit" value="Delete">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-
-</div>
 {% endblock %}

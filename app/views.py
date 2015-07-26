@@ -1,20 +1,41 @@
 __author__ = 'johnedenfield'
 
 from . import app
-from flask import render_template, request, flash, redirect, url_for, abort, session
-from flask_login import LoginManager, login_required, UserMixin, login_user, logout_user, current_user
-
+from flask import render_template, request, flash, redirect, url_for
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from .models import BeerList, UserBeerList, BeerListUpdate, User, db
 from .forms import LoginForm, RegistrationForm, RateBeerForm,DeleteRatingForm
-from sqlalchemy import func
+
+from datetime import datetime
+from dateutil import tz
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view ='/login'
 
+
+# Template Fileters
+def datetimeformat(dte):
+
+    format ="%m/%d/%y %H:%M"
+    utc=dte.replace(tzinfo=tz.gettz('UTC'))
+    local_time =utc.astimezone(tz.gettz('America/New_York'))
+
+    return local_time.strftime(format)
+
+
+def timedelta(value):
+    dt =datetime.utcnow() -value
+    return dt.seconds//60
+
+
+app.jinja_env.filters['datetimeformat']=datetimeformat
+app.jinja_env.filters['timedelta']=timedelta
+
+
 @login_manager.user_loader
 def load_user(user_id):
-    # Logg in User
+    # Log in User
     user = User.query.filter(User.ID == user_id).first()
     if user is not None:
         return user
@@ -84,18 +105,7 @@ def rate_beer(Beer_ID):
         beer=BeerList.query.filter(BeerList.Beer_ID==Beer_ID).first()
         rate_form.beerid.data=Beer_ID
 
-        myratings = UserBeerList.query.filter(UserBeerList.User_ID==current_user.get_id()).\
-            filter(UserBeerList.Beer_ID==Beer_ID).all()
-
-        delete_form=[]
-        for r in myratings:
-            d_form=DeleteRatingForm()
-            d_form.id.data=r.ID
-            delete_form.append(d_form)
-
-
-
-        return render_template('rate_beer.html', rate_form=rate_form, beer=beer, myratings=myratings, delete_form = delete_form)
+        return render_template('rate_beer.html', rate_form=rate_form, beer=beer)
 
 
 @app.route('/delete_rating/<Beer_ID>',methods=['POST'])
@@ -109,7 +119,7 @@ def delete_rating(Beer_ID):
         UserBeerList.query.filter(UserBeerList.ID==form.id.data).delete()
         db.session.commit()
 
-    return redirect(url_for('rate_beer',Beer_ID=Beer_ID))
+    return redirect(url_for('beer_info',Beer_ID=Beer_ID))
 
 
 @app.route('/beer/<Beer_ID>', methods=['GET'])
@@ -118,7 +128,16 @@ def beer_info(Beer_ID):
 
     beer=BeerList.query.filter(BeerList.Beer_ID==Beer_ID).first()
 
-    return render_template('beer_info.html', beer=beer)
+    myratings = UserBeerList.query.filter(UserBeerList.User_ID==current_user.get_id()).\
+            filter(UserBeerList.Beer_ID==Beer_ID).order_by(UserBeerList.DateAndTime.desc()).all()
+
+    delete_form=[]
+    for r in myratings:
+        d_form=DeleteRatingForm()
+        d_form.id.data=r.ID
+        delete_form.append(d_form)
+
+    return render_template('beer_info.html', beer=beer,myratings=myratings, delete_form = delete_form)
 
 
 @app.route('/register', methods=['GET', 'POST'])

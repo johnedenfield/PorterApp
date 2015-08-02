@@ -15,7 +15,7 @@
             <tr>
                 <th> On Draft</th>
                 <th> Beer</th>
-                <th> Rating | #</th>
+                <th> Average Rating</th>
 
             </tr>
             </thead>
@@ -32,7 +32,7 @@
                 <td><a href="{{url_for('beer_info', Beer_ID = beer['Beer_ID'])}}">{{beer['Beer']}}</a></td>
                 <td>
                     <a href="{{url_for('rate_beer', Beer_ID=beer['Beer_ID'])}}">
-                        {{beer['AvgRating'] }} | {{ beer['RatingCnt'] }}
+                        {{beer['AvgRating']}}
                     </a>
                 </td>
 

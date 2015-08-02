@@ -144,8 +144,7 @@ def favorite():
     # Get User Ratings
     my_ratings = db.session.query(BeerList.Beer_ID, BeerList.Beer,
                                   db.func.max(BeerList.Update_ID).label('LastUpdate'),
-                                  db.func.avg(UserBeerList.Rating).label('AvgRating'),
-                                  db.func.count(UserBeerList.Rating).label('RatingCnt')). \
+                                  db.func.avg(UserBeerList.Rating).label('AvgRating')). \
         join(UserBeerList, UserBeerList.Beer_ID == BeerList.Beer_ID). \
         filter(UserBeerList.User_ID == current_user.get_id()). \
         group_by(BeerList.Beer_ID, BeerList.Beer). \

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %} Beer List {% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="panel panel-default">
+
+    <div class="xtra_margin">
+        <h3>My Favorite Beer</h3>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th> On Draft</th>
+                <th> Beer</th>
+                <th> Rating | #</th>
+
+            </tr>
+            </thead>
+            {% for beer in my_ratings %}
+            <tr>
+                <td>
+                    {% if update_id == beer['LastUpdate'] %}
+                    <span class="glyphicon glyphicon-ok-circle" style="color:green"></span>
+                    {% else %}
+                    <span class="glyphicon glyphicon-ban-circle" style="color:red"></span>
+                    {% endif %}
+
+                </td>
+                <td><a href="{{url_for('beer_info', Beer_ID = beer['Beer_ID'])}}">{{beer['Beer']}}</a></td>
+                <td>
+                    <a href="{{url_for('rate_beer', Beer_ID=beer['Beer_ID'])}}">
+                        {{beer['AvgRating'] }} | {{ beer['RatingCnt'] }}
+                    </a>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+</div>
+{% endblock %}

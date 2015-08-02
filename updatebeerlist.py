@@ -4,7 +4,7 @@ import sys, os
 
 VER_ENV_DIR ="/var/www/Flask/Apps/PorterApp/env"
 
-# Activatre virtural env
+# Activate virtural env
 activate_this = os.path.join(VER_ENV_DIR,'bin','activate_this.py')
 execfile(activate_this,dict(__file__=activate_this))
 
@@ -15,7 +15,6 @@ from datetime import datetime
 from app.models import db, BeerListUpdate, BeerList
 
 
-## Need to figure out how to get this to run on  daily bases. for now this is broken.
 
 r = requests.get('http://www.theporterbeerbar.com/drink/beer')
 tree =html.fromstring(r.text)

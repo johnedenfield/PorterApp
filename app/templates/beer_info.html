@@ -2,6 +2,16 @@
 {% block title %} Beer List {% endblock %}
 
 {% block head %}
+
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="{{ url_for('static', filename='charts/charts.js')}}"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+        plot_beer_on_draft( '{{beer.Beer| safe}}' ,{{ on_draft | safe }})
+	});
+
+</script>
+
 {% endblock %}
 
 {% block content %}
@@ -41,6 +51,7 @@
 
 </div>
 
+
 <div class="panel panel-default">
     <div class="xtra_margin">
         <h3>Previous Ratings</h3>
@@ -71,6 +82,14 @@
         </table>
     </div>
 
+</div>
+
+
+<div class="panel panel-default">
+
+    <div class="xtra_margin">
+        <div id="chart"></div>
+    </div>
 </div>
 
 {% endblock %}

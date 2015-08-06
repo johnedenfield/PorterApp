@@ -6,7 +6,7 @@ from flask_login import LoginManager, login_required, login_user, logout_user, c
 from .models import BeerList, UserBeerList, BeerListUpdate, User, db
 from .forms import LoginForm, RegistrationForm, RateBeerForm, DeleteRatingForm
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import tz
 
 login_manager = LoginManager()
@@ -23,13 +23,13 @@ def datetimeformat(dte):
     return local_time.strftime(format)
 
 
-def timedelta(value):
+def time_delta(value):
     dt = datetime.utcnow() - value
     return dt.seconds // 60
 
 # Set Format Functions to current App
 app.jinja_env.filters['datetimeformat'] = datetimeformat
-app.jinja_env.filters['timedelta'] = timedelta
+app.jinja_env.filters['timedelta'] = time_delta
 
 
 @login_manager.user_loader
@@ -133,7 +133,34 @@ def beer_info(Beer_ID):
         d_form.id.data = r.ID
         delete_form.append(d_form)
 
-    return render_template('beer_info.html', beer=beer, myratings=myratings, delete_form=delete_form)
+    # Trend Time on draft for last 30 days
+    start_date = datetime.utcnow() - timedelta(days=30)
+
+    beer_data = db.session.query(BeerListUpdate.DateAndTime). \
+        join(BeerList, BeerList.Update_ID == BeerListUpdate.ID). \
+        filter(BeerList.Beer_ID == Beer_ID). \
+        filter(BeerListUpdate.DateAndTime > start_date). \
+        order_by(BeerListUpdate.DateAndTime.asc()).all()
+
+    on_draft_dates = []
+    epoch = datetime.utcfromtimestamp(0)
+
+    for d in xrange(0, 30):
+        start_day = start_date + timedelta(days=d)
+        end_day = start_date + timedelta(days=d + 1)
+
+        n = 0
+        for b in beer_data:
+            if b.DateAndTime >= start_day and b.DateAndTime < end_day:
+                n = 1
+                break
+
+        dt = start_day - epoch
+        dts = dt.total_seconds()
+        on_draft_dates.append([dts * 1000, n])
+
+    return render_template('beer_info.html', beer=beer, on_draft=on_draft_dates,
+                           myratings=myratings, delete_form=delete_form)
 
 
 @app.route('/favorite', methods=['GET', 'POST'])

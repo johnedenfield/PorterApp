@@ -22,7 +22,7 @@ function plot_beer_on_draft(beer, beer_data)
             min: 0,
             max: 1,
             allowDecimals: false,
-            categories: ['On','Off']
+            categories: ['Off','On']
         },
 
 

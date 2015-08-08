@@ -4,9 +4,12 @@ Custom CSS for the My Beer Site
 */
 
 /* Table */
-table, th {
+
+
+th, td {
 
     text-align:center;
+    width: 25%;
 
 }
 

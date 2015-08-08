@@ -9,7 +9,12 @@
 <div class="panel panel-default">
 
     <div class="xtra_margin">
-        <h3>My Favorite Beer</h3>
+        <ul class="nav nav-pills">
+            <li role="presentation"><a href="{{ url_for('beer_list') }}">On Draft</a></li>
+            <li role="presentation" class="active"><a href="{{ url_for('favorite') }}">My Favorites</a></li>
+
+        </ul>
+
         <table class="table table-striped">
             <thead>
             <tr>

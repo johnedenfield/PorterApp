@@ -5,8 +5,8 @@ import sys, os
 VER_ENV_DIR ="/var/www/Flask/Apps/PorterApp/env"
 
 # Activate virtural env
-activate_this = os.path.join(VER_ENV_DIR,'bin','activate_this.py')
-execfile(activate_this,dict(__file__=activate_this))
+# activate_this = os.path.join(VER_ENV_DIR,'bin','activate_this.py')
+# execfile(activate_this,dict(__file__=activate_this))
 
 
 from lxml import html
@@ -30,11 +30,12 @@ db.session.commit()
 for tr in beertable[0].iter(tag="tr"):
 
     if tr[0].tag == 'td':
-        beer = tr[1][0].text
-        brewery = tr[0].text
+        beer = tr[1][0].text.strip()
+        brewery = tr[0].text.strip()
         id=''.join(e for e in brewery + beer if e.isalnum()).upper()
 
-        data.append(BeerList(Update_ID = beer_list_update.ID , Beer_ID =id, Brewery = tr[0].text, Beer = tr[1][0].text, Style =tr[2].text,
+        data.append(
+            BeerList(Update_ID=beer_list_update.ID, Beer_ID=id, Brewery=brewery, Beer=tr[1][0].text, Style=tr[2].text,
                 Origin =tr[3].text, Volume=tr[4].text, ABV =tr[5].text, Description = tr[6].text))
 
 

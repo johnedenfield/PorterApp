@@ -13,7 +13,7 @@
         <p><strong>Description:</strong> {{beer.Description}}</p>
 
 
-        <form method=post action="{{url_for('rate_beer', Beer_ID=beer.Beer_ID)}}">
+        <form method=post action="{{url_for('rate_beer', this_beer = beer.Beer_ID)}}">
             <div class="form-group">
                 {{ rate_form.hidden_tag() }}
                 {{ rate_form.beerid() }}

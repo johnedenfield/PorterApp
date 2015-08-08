@@ -24,10 +24,10 @@
             </thead>
             {% for beer in mybeerlist %}
             <tr>
-                <td><a href="{{url_for('beer_info', Beer_ID=beer['Beer_ID'])}}">{{beer['Beer']}}</a></td>
-                <td>{{beer['Brewery']}}</td>
+                <td><a href="{{url_for('beer_info', this_beer = beer['Beer_ID'] )}}">{{beer['Beer']}}</a></td>
+                <td><a href="{{url_for('brewery', this_brewery = beer['Brewery'] )}}"> {{beer['Brewery']}}</a></td>
                 <td>
-                    <a href="{{url_for('rate_beer', Beer_ID=beer['Beer_ID'])}}">
+                    <a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
                     {% if beer['UserRating']  %}
                         {{ beer['UserRating'] }} | {{ beer['UserRateCnt'] }}
                     {% else %}

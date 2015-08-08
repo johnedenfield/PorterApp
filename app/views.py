@@ -78,9 +78,9 @@ def beer_list():
     return render_template('beer_list.html', mybeerlist=my_beer_list, current_user=current_user, updated=updated)
 
 
-@app.route('/rate_beer/<Beer_ID>', methods=['GET', 'POST'])
+@app.route('/rate_beer/<this_beer>', methods=['GET', 'POST'])
 @login_required
-def rate_beer(Beer_ID):
+def rate_beer(this_beer):
     rate_form = RateBeerForm(request.form)
 
     if request.method == 'POST':
@@ -98,37 +98,37 @@ def rate_beer(Beer_ID):
 
         else:
             print "validation failed"
-            return redirect(url_for('rate_beer', Beer_ID=Beer_ID))
+            return redirect(url_for('rate_beer', Beer_ID=this_beer))
 
     else:
-        beer = BeerList.query.filter(BeerList.Beer_ID == Beer_ID).first()
-        rate_form.beerid.data = Beer_ID
+        beer = BeerList.query.filter(BeerList.Beer_ID == this_beer).first()
+        rate_form.beerid.data = this_beer
 
         return render_template('rate_beer.html', rate_form=rate_form, beer=beer)
 
 
-@app.route('/delete_rating/<Beer_ID>', methods=['POST'])
+@app.route('/delete_rating/<this_beer>', methods=['POST'])
 @login_required
-def delete_rating(Beer_ID):
+def delete_rating(this_beer):
     form = DeleteRatingForm(request.form)
 
     if form.validate_on_submit():
         UserBeerList.query.filter(UserBeerList.ID == form.id.data).delete()
         db.session.commit()
 
-    return redirect(url_for('beer_info', Beer_ID=Beer_ID))
+    return redirect(url_for('beer_info', this_beer=this_beer))
 
 
-@app.route('/beer/<Beer_ID>', methods=['GET'])
+@app.route('/beer/<this_beer>', methods=['GET'])
 @login_required
-def beer_info(Beer_ID):
-    beer = BeerList.query.filter(BeerList.Beer_ID == Beer_ID).first()
+def beer_info(this_beer):
+    beer = BeerList.query.filter(BeerList.Beer_ID == this_beer).first()
 
-    myratings = UserBeerList.query.filter(UserBeerList.User_ID == current_user.get_id()). \
-        filter(UserBeerList.Beer_ID == Beer_ID).order_by(UserBeerList.DateAndTime.desc()).all()
+    my_ratings = UserBeerList.query.filter(UserBeerList.User_ID == current_user.get_id()). \
+        filter(UserBeerList.Beer_ID == this_beer).order_by(UserBeerList.DateAndTime.desc()).all()
 
     delete_form = []
-    for r in myratings:
+    for r in my_ratings:
         d_form = DeleteRatingForm()
         d_form.id.data = r.ID
         delete_form.append(d_form)
@@ -138,7 +138,7 @@ def beer_info(Beer_ID):
 
     beer_data = db.session.query(BeerListUpdate.DateAndTime). \
         join(BeerList, BeerList.Update_ID == BeerListUpdate.ID). \
-        filter(BeerList.Beer_ID == Beer_ID). \
+        filter(BeerList.Beer_ID == this_beer). \
         filter(BeerListUpdate.DateAndTime > start_date). \
         order_by(BeerListUpdate.DateAndTime.asc()).all()
 
@@ -160,7 +160,7 @@ def beer_info(Beer_ID):
         on_draft_dates.append([dts * 1000, n])
 
     return render_template('beer_info.html', beer=beer, on_draft=on_draft_dates,
-                           myratings=myratings, delete_form=delete_form)
+                           my_ratings=my_ratings, delete_form=delete_form)
 
 
 @app.route('/favorite', methods=['GET', 'POST'])
@@ -181,6 +181,22 @@ def favorite():
     update_id = db.session.query(db.func.max(BeerListUpdate.ID)).scalar()
 
     return render_template('favorite.html', my_ratings=my_ratings, update_id=update_id)
+
+
+@app.route('/brewery/<this_brewery>', methods=['GET', 'POST'])
+@login_required
+def brewery(this_brewery):
+    brewery_beers = db.session.query(BeerList.Beer_ID, BeerList.Beer,
+                                     db.func.max(BeerList.Update_ID).label('LastUpdate'),
+                                     db.func.avg(UserBeerList.Rating).label('AvgRating')). \
+        outerjoin(UserBeerList, UserBeerList.Beer_ID == BeerList.Beer_ID). \
+        filter(db.func.trim(BeerList.Brewery) == this_brewery.strip()). \
+        group_by(BeerList.Beer_ID, BeerList.Beer). \
+        order_by(db.func.avg(UserBeerList.Rating).desc()).all()
+
+    update_id = db.session.query(db.func.max(BeerListUpdate.ID)).scalar()
+
+    return render_template('brewery.html', brewery_beers=brewery_beers, update_id=update_id, this_brewery=this_brewery)
 
 
 # register / Login / Logout

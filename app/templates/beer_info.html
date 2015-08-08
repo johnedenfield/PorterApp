@@ -19,7 +19,7 @@
 
     <div class="panel-body">
 
-        <a href="{{url_for('rate_beer', Beer_ID=beer.Beer_ID)}}" class=" btn btn-default"> Rate
+        <a href="{{url_for('rate_beer', this_beer=beer.Beer_ID)}}" class=" btn btn-default"> Rate
             <span class="glyphicon glyphicon-thumbs-up"></span>
         </a>
 
@@ -64,12 +64,12 @@
                 <th> Remove</th>
             </tr>
             </thead>
-            {% for rating in myratings %}
+            {% for rating in my_ratings %}
             <tr>
                 <td>{{rating.DateAndTime | datetimeformat }}</td>
                 <td>{{rating.Rating}}</td>
                 <td>
-                    <form method=post action="{{url_for('delete_rating',Beer_ID=beer.Beer_ID)}}">
+                    <form method=post action="{{url_for('delete_rating',this_beer=beer.Beer_ID)}}">
                         {{delete_form[loop.index0].hidden_tag()}}
                         {{delete_form[loop.index0].id()}}
                         <button class="btn btn-default" type="submit" value="Delete">

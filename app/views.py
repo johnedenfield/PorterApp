@@ -203,7 +203,7 @@ def register():
             return redirect(url_for('login'))
 
         else:
-            flash(form.email.data + ' is alerady regestered with a user')
+            flash(form.email.data + ' is alerady regestered with a user', 'login')
 
     return render_template('register.html', form=form)
 

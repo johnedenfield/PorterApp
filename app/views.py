@@ -184,12 +184,10 @@ def favorite():
 
 
 # register / Login / Logout
-##
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    # To do
-    # Add flash for reqistration
-    # Clean up HTML and make pretty
+    #  Creates a account user account
 
     form = RegistrationForm(request.form)
 
@@ -205,7 +203,7 @@ def register():
             return redirect(url_for('login'))
 
         else:
-            flash('User already exists')
+            flash(form.email.data + ' is alerady regestered with a user')
 
     return render_template('register.html', form=form)
 
@@ -223,7 +221,11 @@ def login():
             login_user(user)
             return redirect(url_for('beer_list'))
         else:
-            flash('Invalid Credentials')
+            if user is None:
+                flash('User\'s email: %s cannot be found. Check your email address' % email, 'login')
+            else:
+                flash('Incorrect Password', 'login')
+
             return render_template('login.html', form=form)
 
     else:

@@ -1,18 +1,24 @@
 
-function plot_beer_on_draft(beer, beer_data)
-{
+
+
+function plot_beer_on_draft(beer, beer_data) {
+
+
     $('#chart').highcharts({
         chart: {
             type: 'spline'
         },
         title: {
-            text: 'Days on Draft'
+            text: 'On Draft (Last 30 Days)'
         },
 
         xAxis: {
             type: 'datetime',
             title: {
                 text: 'Date'
+            },
+            dateTimeLabelFormats: {
+                day: '%b %e'
             }
         },
         yAxis: {
@@ -25,6 +31,9 @@ function plot_beer_on_draft(beer, beer_data)
             categories: ['Off','On']
         },
 
+        tooltip: {
+                xDateFormat: ' %A, %b %e'
+        },
 
         plotOptions: {
             spline: {
@@ -32,6 +41,9 @@ function plot_beer_on_draft(beer, beer_data)
                     enabled: true
                 }
             }
+
+
+
         },
 
         series: [{

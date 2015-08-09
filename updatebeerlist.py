@@ -2,11 +2,11 @@ __author__ = 'johnedenfield'
 
 import sys, os 
 
-VER_ENV_DIR ="/var/www/Flask/Apps/PorterApp/env"
+#VER_ENV_DIR ="/var/www/Flask/Apps/PorterApp/env"
 
 # Activate virtural env
-activate_this = os.path.join(VER_ENV_DIR, 'bin', 'activate_this.py')
-execfile(activate_this, dict(__file__=activate_this))
+#activate_this = os.path.join(VER_ENV_DIR, 'bin', 'activate_this.py')
+#execfile(activate_this, dict(__file__=activate_this))
 
 
 from lxml import html

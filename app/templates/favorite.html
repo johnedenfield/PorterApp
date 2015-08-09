@@ -34,9 +34,9 @@
                     {% endif %}
 
                 </td>
-                <td><a href="{{url_for('beer_info', Beer_ID = beer['Beer_ID'])}}">{{beer['Beer']}}</a></td>
+                <td><a href="{{url_for('beer_info', this_beer = beer['Beer_ID'])}}">{{beer['Beer']}}</a></td>
                 <td>
-                    <a href="{{url_for('rate_beer', Beer_ID=beer['Beer_ID'])}}">
+                    <a href="{{url_for('rate_beer', this_beer=beer['Beer_ID'])}}">
                         {{beer['AvgRating']}}
                     </a>
                 </td>

@@ -9,11 +9,7 @@ Custom CSS for the My Beer Site
 th, td {
 
     text-align:center;
-    width: 25%;
+    width: 20%;
 
 }
 
-div.xtra_margin {
-
-    margin:25px;
-    }

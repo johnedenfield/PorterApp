@@ -5,6 +5,7 @@ from . import app  # Import app from init
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+import urllib
 
 db = SQLAlchemy(app)
 
@@ -17,12 +18,12 @@ class UserBeerList(db.Model):
     ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     DateAndTime = db.Column(db.DateTime)
     User_ID = db.Column(db.Integer, db.ForeignKey('User.ID'))
-    Beer_ID = db.Column(db.Integer, db.ForeignKey('BeerList.Beer_ID'))
+    Beer_ID = db.Column(db.Integer, db.ForeignKey('DraftList.Beer_ID'))
     Rating = db.Column(db.Integer)
 
     # Relationships
     UserInfo = db.relationship("User", foreign_keys=[User_ID])
-    BeerInfo = db.relationship("BeerList", foreign_keys=[Beer_ID])
+    BeerInfo = db.relationship("DraftList", foreign_keys=[Beer_ID])
 
     def __init__(self, User_ID, Beer_ID, Rating, DateAndTime=None):
         if DateAndTime is None:
@@ -33,11 +34,12 @@ class UserBeerList(db.Model):
         self.Rating = Rating
 
 
-class BeerList(db.Model):
-    __tablename__ = 'BeerList'
+class DraftList(db.Model):
+    __tablename__ = 'DraftList'
 
-    ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    Beer_ID = db.Column(db.String)
+    Beer_ID = db.Column(db.String, primary_key=True, autoincrement=False)
+    OnDraft = db.Column(db.Integer)
+    Updated = db.Column(db.DateTime)
     Brewery = db.Column(db.String)
     Beer = db.Column(db.String)
     Style = db.Column(db.String)
@@ -45,17 +47,25 @@ class BeerList(db.Model):
     Volume = db.Column(db.String)
     ABV = db.Column(db.String)
     Description = db.Column(db.String)
-    Update_ID = db.Column(db.Integer, db.ForeignKey('BeerListUpdate.ID'))
+    BeerRating = db.Column(db.Float)
+    RatingSite = db.Column(db.String)
+    NotifyUser = db.Column(db.Integer)
 
-    # Relationships
-    Updated = db.relationship("BeerListUpdate", foreign_keys=[Update_ID])
+    def set_RatingSite(self, url):
+        self.RatingSite = urllib.quote_plus(url)
+
+    def get_RatingSite(self):
+        return urllib.unquote_plus(self.RatingSite)
 
 
-class BeerListUpdate(db.Model):
-    __tablename__ = 'BeerListUpdate'
+class DraftHistory(db.Model):
+    __tablename__ = 'DraftHistory'
 
     ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     DateAndTime = db.Column(db.DateTime)
+    Beer_ID = db.Column(db.String, db.ForeignKey('DraftList.Beer_ID'))
+
+    BeerInfo = db.relationship("DraftList", foreign_keys=[Beer_ID])
 
 
 # User Model
@@ -66,7 +76,6 @@ class User(db.Model, UserMixin):
     Email = db.Column(db.String)
     UserName = db.Column(db.String)
     Pwdhash = db.Column(db.String)
-    User = db.relationship("UserBeerList", backref=db.backref('User'))
 
     def __init__(self, UserName, Email, Password):
         self.UserName = UserName

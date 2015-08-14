@@ -15,14 +15,15 @@
             <tr>
                 <th> On Draft</th>
                 <th> Beer</th>
-                <th> Avg User (All) Rating</th>
-
+                <th> My Rating</th>
+                <th> Others Rating</th>
+                <th> RB | BA</th>
             </tr>
             </thead>
-            {% for beer in brewery_beers %}
+            {% for beer in brewery_list %}
             <tr>
                 <td>
-                    {% if update_id == beer['LastUpdate'] %}
+                    {% if beer['OnDraft']==1 %}
                     <span class="glyphicon glyphicon-ok-circle" style="color:green"></span>
                     {% else %}
                     <span class="glyphicon glyphicon-ban-circle" style="color:red"></span>
@@ -32,8 +33,18 @@
                 <td><a href="{{url_for('beer_info', this_beer = beer['Beer_ID'])}}">{{beer['Beer']}}</a></td>
                 <td>
                     <a href="{{url_for('rate_beer', this_beer = beer['Beer_ID'])}}">
-                        {{beer['AvgRating']}}
+                        {{beer['MyAvgRating']}}
                     </a>
+                </td>
+                <td>
+                    {{beer['OthersAvgRating']}}
+                </td>
+                <td>
+                    {% if beer['BeerRating'] %}
+                    <a href="{{beer['BeerRatingSite']}}"> {{beer['BeerRating']}}</a>
+                    {% else %}
+                    n/a
+                    {% endif %}
                 </td>
 
             </tr>

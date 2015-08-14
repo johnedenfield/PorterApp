@@ -10,7 +10,7 @@
 
     <div class="panel-body">
         <ul class="nav nav-pills">
-            <li role="presentation"><a href="{{ url_for('beer_list') }}">On Draft</a></li>
+            <li role="presentation"><a href="{{ url_for('draft_list') }}">On Draft</a></li>
             <li role="presentation" class="active"><a href="{{ url_for('favorite') }}">My Favorites</a></li>
 
         </ul>
@@ -20,26 +20,40 @@
             <tr>
                 <th> On Draft</th>
                 <th> Beer</th>
-                <th> Average Rating</th>
-
+                <th> Brewery</th>
+                <th> My Rating</th>
+                <th> BA|RB Rating</th>
             </tr>
             </thead>
-            {% for beer in my_ratings %}
+            {% for beer in favorite_drafts %}
             <tr>
                 <td>
-                    {% if update_id == beer['LastUpdate'] %}
+                    {% if beer['OnDraft']==1 %}
                     <span class="glyphicon glyphicon-ok-circle" style="color:green"></span>
                     {% else %}
                     <span class="glyphicon glyphicon-ban-circle" style="color:red"></span>
                     {% endif %}
 
                 </td>
-                <td><a href="{{url_for('beer_info', this_beer = beer['Beer_ID'])}}">{{beer['Beer']}}</a></td>
+                <td>
+                    <a href="{{url_for('beer_info', this_beer = beer['Beer_ID'])}}">{{beer['Beer']}}</a>
+                </td>
+                <td>
+                    <a href="{{url_for('brewery', this_brewery = beer['Brewery'] )}}"> {{beer['Brewery']}}</a>
+                </td>
                 <td>
                     <a href="{{url_for('rate_beer', this_beer=beer['Beer_ID'])}}">
-                        {{beer['AvgRating']}}
+                        {{beer['MyRating']}}
                     </a>
                 </td>
+                <td>
+                    {% if beer['BeerRating'] %}
+                    <a href="{{beer['RatingSite']}}"> {{beer['BeerRating']}}</a>
+                    {% else %}
+                    n/a
+                    {% endif %}
+                </td>
+
 
             </tr>
             {% endfor %}

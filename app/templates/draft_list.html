@@ -10,7 +10,7 @@
 
     <div class="panel-body">
         <ul class="nav nav-pills">
-            <li role="presentation" class="active"><a href="{{ url_for('beer_list') }}">On Draft</a></li>
+            <li role="presentation" class="active"><a href="{{ url_for('draft_list') }}">On Draft</a></li>
             <li role="presentation"><a href="{{ url_for('favorite') }}">My Favorites</a></li>
         </ul>
 
@@ -19,26 +19,48 @@
             <tr>
                 <th> Beer</th>
                 <th> Brewery</th>
-                <th> Rating | #</th>
+                <th> Me</th>
+                <th> Others</th>
+                <th> RB/BA</th>
             </tr>
             </thead>
-            {% for beer in mybeerlist %}
+            {% for beer in draft_list %}
             <tr>
                 <td><a href="{{url_for('beer_info', this_beer = beer['Beer_ID'] )}}">{{beer['Beer']}}</a></td>
                 <td><a href="{{url_for('brewery', this_brewery = beer['Brewery'] )}}"> {{beer['Brewery']}}</a></td>
                 <td>
                     <a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
-                    {% if beer['UserRating']  %}
-                        {{ beer['UserRating'] }} | {{ beer['UserRateCnt'] }}
+                        {% if beer['MyRating'] %}
+                        {{ beer['MyRating'] }}
                     {% else %}
-                         n/a | 0
+                        n/a
                     {% endif %}
                     </a>
                 </td>
+
+                <td>
+                    {% if beer['OthersRating'] %}
+                    {{ beer['OthersRating'] }}
+                    {% else %}
+                    n/a
+                    {% endif %}
+                    </a>
+                </td>
+
+
+                <td>
+                    {% if beer['BeerRating'] %}
+                    <a href="{{beer['BeerRatingSite']}}"> {{beer['BeerRating']}}</a>
+                    {% else %}
+                    n/a
+                    {% endif %}
+                </td>
+
+
             </tr>
             {% endfor %}
         </table>
-        <p><em>Beer list was updated {{updated.DateAndTime|timedelta}} minutes ago </em></p>
+        <p><em>Beer list was updated {{updated|timedelta}} minutes ago </em></p>
     </div>
 
 </div>

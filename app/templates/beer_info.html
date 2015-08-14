@@ -45,6 +45,20 @@
                 <td>ABV</td>
                 <td>{{beer.ABV}}</td>
             </tr>
+            <tr>
+                <td><a href="{{beer.RatingSite}}">Rating</a></td>
+                <td>{{beer.BeerRating}}</td>
+            </tr>
+            <tr>
+                {% if beer.OnDraft ==1 %}
+                <td>On Draft as of</td>
+                {% else %}
+                <td>Off Draft as of</td>
+                {% endif %}
+                <td>{{beer.Updated| datetimeformat }}</td>
+            </tr>
+
+
         </table>
 
     </div>

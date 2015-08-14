@@ -3,7 +3,7 @@ __author__ = 'johnedenfield'
 from . import app
 from flask import render_template, request, flash, redirect, url_for
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
-from .models import BeerList, UserBeerList, BeerListUpdate, User, db
+from .models import DraftList, UserBeerList, DraftHistory, User, db
 from .forms import LoginForm, RegistrationForm, RateBeerForm, DeleteRatingForm
 
 from datetime import datetime, timedelta
@@ -42,40 +42,39 @@ def load_user(user_id):
 
 @app.route("/")
 @login_required
-def beer_list():
+def draft_list():
     # Returns the current beer list with the user ratings
+    updated = db.session.query(db.func.max(DraftList.Updated)).filter(DraftList.OnDraft == 1).scalar()
 
-    last_update_id = db.session.query(db.func.max(BeerListUpdate.ID)).scalar()
-    updated = BeerListUpdate.query.filter(BeerListUpdate.ID == last_update_id).first()
+    my_rating = db.session.query(UserBeerList.Beer_ID,
+                                 db.func.avg(UserBeerList.Rating).label('Avg_Rating'),
+                                 db.func.count(UserBeerList.Rating).label('Avg_Rating_cnt')) \
+        .group_by(UserBeerList.Beer_ID). \
+        filter(UserBeerList.User_ID == current_user.get_id()).subquery()
 
-    user_rating = db.session.query(UserBeerList.Beer_ID,
-                                   db.func.avg(UserBeerList.Rating).label('Avg_Rating'),
-                                   db.func.count(UserBeerList.Rating).label('Avg_Rating_cnt')). \
-        filter(UserBeerList.User_ID == current_user.get_id()).group_by(UserBeerList.Beer_ID).subquery()
+    others_rating = db.session.query(UserBeerList.Beer_ID,
+                                     db.func.avg(UserBeerList.Rating).label('Avg_Rating'),
+                                     db.func.count(UserBeerList.Rating).label('Avg_Rating_cnt')). \
+        group_by(UserBeerList.Beer_ID). \
+        filter(UserBeerList.User_ID != current_user.get_id()).subquery()
 
-    # Future Implementation of other user ratings
-    # other_user_rating = db.session.query(UserBeerList.Beer_ID, \
-    #                                     db.func.avg(UserBeerList.Rating).label('Avg_Rating'),
-    #                                     db.func.count(UserBeerList.Rating).label('Avg_Rating_cnt')). \
-    #    filter(UserBeerList.User_ID != current_user.get_id()).group_by(UserBeerList.Beer_ID).subquery()
+    rated_draft_list = db.session.query(DraftList.Beer_ID, DraftList.Beer, DraftList.Brewery,
+                                        DraftList.BeerRating, DraftList.RatingSite,
+                                        my_rating.c.Avg_Rating.label('MyRating'),
+                                        my_rating.c.Avg_Rating_cnt.label('MyRatingCnt'),
+                                        others_rating.c.Avg_Rating.label('OtherRating'),
+                                        others_rating.c.Avg_Rating_cnt.label('OtherRatingCnt')). \
+        filter(DraftList.OnDraft == 1). \
+        outerjoin(my_rating, DraftList.Beer_ID == my_rating.c.Beer_ID). \
+        outerjoin(others_rating, DraftList.Beer_ID == others_rating.c.Beer_ID). \
+        order_by(my_rating.c.Avg_Rating.desc()).all()
 
-    rated_beerlist = db.session.query(BeerList.Beer_ID, BeerList.Beer, BeerList.Brewery,
-                                      user_rating.c.Avg_Rating.label('AvgUserRating'),
-                                      user_rating.c.Avg_Rating_cnt.label('UserRatingCnt')). \
-        outerjoin(user_rating, BeerList.Beer_ID == user_rating.c.Beer_ID). \
-        filter(BeerList.Update_ID == last_update_id).order_by(user_rating.c.Avg_Rating.desc()).all()
+    draft_list = [dict(Beer_ID=beer[0], Beer=beer[1], Brewery=beer[2],
+                       BeerRating=beer[3], BeerRatingSite=beer[4],
+                       MyRating=beer[5], MyRateCnt=beer[6], OthersRating=beer[7],
+                       OthersRateCnt=beer[8]) for beer in rated_draft_list]
 
-    # beer_list = db.session.query(beer_list1.c.Beer, beer_list1.c.Brewery,
-    #                             beer_list1.c.AvgUserRating, beer_list1.c.UserRatingCnt,
-    #                             other_user_rating.c.Avg_Rating, other_user_rating.c.Avg_Rating_cnt). \
-    #    outerjoin(other_user_rating, beer_list1.c.Beer_ID == other_user_rating.c.Beer_ID).all()
-
-    my_beer_list = []
-    for beer in rated_beerlist:
-        my_beer_list.append(dict(Beer_ID=beer[0], Beer=beer[1], Brewery=beer[2], UserRating=beer[3],
-                                 UserRateCnt=beer[4]))
-
-    return render_template('beer_list.html', mybeerlist=my_beer_list, current_user=current_user, updated=updated)
+    return render_template('draft_list.html', draft_list=draft_list, current_user=current_user, updated=updated)
 
 
 @app.route('/rate_beer/<this_beer>', methods=['GET', 'POST'])
@@ -94,14 +93,14 @@ def rate_beer(this_beer):
             db.session.add(beer)
             db.session.commit()
 
-            return redirect(url_for('beer_list'))
+            return redirect(url_for('draft_list'))
 
         else:
             print "validation failed"
             return redirect(url_for('rate_beer', Beer_ID=this_beer))
 
     else:
-        beer = BeerList.query.filter(BeerList.Beer_ID == this_beer).first()
+        beer = DraftList.query.filter(DraftList.Beer_ID == this_beer).first()
         rate_form.beerid.data = this_beer
 
         return render_template('rate_beer.html', rate_form=rate_form, beer=beer)
@@ -122,7 +121,7 @@ def delete_rating(this_beer):
 @app.route('/beer/<this_beer>', methods=['GET'])
 @login_required
 def beer_info(this_beer):
-    beer = BeerList.query.filter(BeerList.Beer_ID == this_beer).first()
+    beer = DraftList.query.filter(DraftList.Beer_ID == this_beer).first()
 
     my_ratings = UserBeerList.query.filter(UserBeerList.User_ID == current_user.get_id()). \
         filter(UserBeerList.Beer_ID == this_beer).order_by(UserBeerList.DateAndTime.desc()).all()
@@ -136,11 +135,8 @@ def beer_info(this_beer):
     # Trend Time on draft for last 30 days
     start_date = datetime.utcnow() - timedelta(days=30)
 
-    beer_data = db.session.query(BeerListUpdate.DateAndTime). \
-        join(BeerList, BeerList.Update_ID == BeerListUpdate.ID). \
-        filter(BeerList.Beer_ID == this_beer). \
-        filter(BeerListUpdate.DateAndTime > start_date). \
-        order_by(BeerListUpdate.DateAndTime.asc()).all()
+    draft_history = DraftHistory.query.filter(DraftHistory.Beer_ID == this_beer). \
+        filter(DraftHistory.DateAndTime > start_date).all()
 
     on_draft_dates = []
     epoch = datetime.utcfromtimestamp(0)
@@ -150,8 +146,8 @@ def beer_info(this_beer):
         end_day = start_date + timedelta(days=d + 1)
 
         n = 0
-        for b in beer_data:
-            if b.DateAndTime >= start_day and b.DateAndTime < end_day:
+        for record in draft_history:
+            if record.DateAndTime >= start_day and record.DateAndTime < end_day:
                 n = 1
                 break
 
@@ -169,34 +165,49 @@ def favorite():
     # List all the  beers rated by the user. Show which beers are currently on draft
 
     # Get User Ratings
-    my_ratings = db.session.query(BeerList.Beer_ID, BeerList.Beer,
-                                  db.func.max(BeerList.Update_ID).label('LastUpdate'),
-                                  db.func.avg(UserBeerList.Rating).label('AvgRating')). \
-        join(UserBeerList, UserBeerList.Beer_ID == BeerList.Beer_ID). \
-        filter(UserBeerList.User_ID == current_user.get_id()). \
-        group_by(BeerList.Beer_ID, BeerList.Beer). \
-        order_by(db.func.avg(UserBeerList.Rating).desc()).all()
+    my_rating = db.session.query(UserBeerList.Beer_ID,
+                                 db.func.avg(UserBeerList.Rating).label('Avg_Rating'),
+                                 db.func.count(UserBeerList.Rating).label('Avg_Rating_cnt')). \
+        filter(UserBeerList.User_ID == current_user.get_id()).group_by(UserBeerList.Beer_ID).subquery()
 
-    # Last Update Id
-    update_id = db.session.query(db.func.max(BeerListUpdate.ID)).scalar()
+    drafts = db.session.query(DraftList.Beer_ID,
+                              DraftList.Beer,
+                              DraftList.Brewery,
+                              DraftList.BeerRating,
+                              DraftList.RatingSite,
+                              DraftList.OnDraft,
+                              my_rating.c.Avg_Rating,
+                              my_rating.c.Avg_Rating_cnt). \
+        join(my_rating, my_rating.c.Beer_ID == DraftList.Beer_ID). \
+        order_by(my_rating.c.Avg_Rating.desc()).all()
 
-    return render_template('favorite.html', my_ratings=my_ratings, update_id=update_id)
+    favorite_drafts = [dict(Beer_ID=beer[0], Beer=beer[1], Brewery=beer[2], BeerRating=beer[3],
+                            RatingSite=beer[4], OnDraft=beer[5], MyRating=beer[6]) for beer in drafts]
+
+    return render_template('favorite.html', favorite_drafts=favorite_drafts)
 
 
 @app.route('/brewery/<this_brewery>', methods=['GET', 'POST'])
 @login_required
 def brewery(this_brewery):
-    brewery_beers = db.session.query(BeerList.Beer_ID, BeerList.Beer,
-                                     db.func.max(BeerList.Update_ID).label('LastUpdate'),
-                                     db.func.avg(UserBeerList.Rating).label('AvgRating')). \
-        outerjoin(UserBeerList, UserBeerList.Beer_ID == BeerList.Beer_ID). \
-        filter(db.func.trim(BeerList.Brewery) == this_brewery.strip()). \
-        group_by(BeerList.Beer_ID, BeerList.Beer). \
-        order_by(db.func.avg(UserBeerList.Rating).desc()).all()
+    # Get User Ratings
 
-    update_id = db.session.query(db.func.max(BeerListUpdate.ID)).scalar()
+    my_rating = db.session.query(UserBeerList.Beer_ID,
+                                 db.func.avg(UserBeerList.Rating).label('MyAvgRating')). \
+        filter(UserBeerList.User_ID == current_user.get_id()).group_by(UserBeerList.Beer_ID).subquery()
 
-    return render_template('brewery.html', brewery_beers=brewery_beers, update_id=update_id, this_brewery=this_brewery)
+    others_rating = db.session.query(UserBeerList.Beer_ID,
+                                     db.func.avg(UserBeerList.Rating).label('OthersAvgRating')). \
+        filter(UserBeerList.User_ID != current_user.get_id()).group_by(UserBeerList.Beer_ID).subquery()
+
+    brewery_list = db.session.query(DraftList.Beer_ID, DraftList.OnDraft,
+                                    DraftList.Beer, DraftList.BeerRating, DraftList.RatingSite,
+                                    my_rating.c.MyAvgRating, others_rating.c.OthersAvgRating). \
+        filter(DraftList.Brewery == this_brewery). \
+        outerjoin(my_rating, my_rating.c.Beer_ID == DraftList.Beer_ID). \
+        outerjoin(others_rating, others_rating.c.Beer_ID == DraftList.Beer_ID).all()
+
+    return render_template('brewery.html', brewery_list=brewery_list, this_brewery=this_brewery)
 
 
 # register / Login / Logout

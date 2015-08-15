@@ -21,8 +21,9 @@
         {% for beer in draft_list %}
 
         <div class="row">
-            <table class="ondraftlist {{loop.cycle('alt-odd', 'alt-even')}}">
+            <table class="draftlist {{loop.cycle('alt-odd', 'alt-even')}}">
                 <tr>
+                    <th> My Rating</th>
                     <th>
                         <a href="{{url_for('brewery', this_brewery = beer['Brewery'] )}}"> {{beer['Brewery']}}</a>
                     </th>
@@ -34,13 +35,15 @@
 
                 <tr>
 
-                    <td> My Rating</td>
-                    <td><a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
+
+                    <td rowspan="3"><a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
+
                         {% if beer['MyRating'] %}
-                        {{ beer['MyRating'] }}
+                        <p class="lead">{{ beer['MyRating'] }}</p>
                         {% else %}
-                        n/a
+                        rate
                         {% endif %}
+
                     </a>
                     </td>
                 </tr>
@@ -56,7 +59,7 @@
                         {% endif %}
                     </td>
                 </tr>
-
+                {% if beer['RatingSite'] %}
                 <tr>
                     <td>
                         {% if 'beeradvocate' in beer['RatingSite'] %}
@@ -64,7 +67,7 @@
                         {% elif 'ratebeer' in beer['RatingSite'] %}
                         Rate Beer
                         {% else %}
-                        No Rating Site
+                        {{beer['RatingSite']}}
                         {% endif %}
                     </td>
                     <td>
@@ -80,7 +83,7 @@
                     </td>
 
                 </tr>
-
+                {% endif %}
 
             </table>
         </div>

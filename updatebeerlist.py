@@ -42,6 +42,7 @@ def scrape_draft_list():
 
         draft_beer = DraftList.query.filter(DraftList.Beer_ID == beer_id).first()
 
+
         if draft_beer is None:
             draft_beer = DraftList(Beer_ID=beer_id, OnDraft=1, Updated=dte, Brewery=brewery,
                                    Beer=beer, Style=style, Origin=origin, Volume=volume, ABV=abv,
@@ -69,7 +70,11 @@ def scrape_draft_list():
 
     db.session.commit()
 
-    update(DraftList).where(DraftList.Updated != dte).values(OnDraft=0)
+    draft_list = DraftList.query.filter(DraftList.Updated != dte).all()
+    for beer in draft_list:
+        beer.OnDraft = 0
+        db.session.add(beer)
+
     db.session.commit()
 
 

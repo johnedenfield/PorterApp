@@ -6,10 +6,45 @@ Custom CSS for the My Beer Site
 /* Table */
 
 
-th, td {
-
+ td{
     text-align:center;
-    width: 20%;
 
 }
 
+table.ondraftlist{
+    border-top: 1px solid #D8D8D8;
+    width: 97%;
+    margin-left:1.5%;
+    margin-right:1.5%;
+
+}
+
+table.ondraftlist td,th {
+    text-align:center;
+    width: 50%;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+table.draftlist{
+    border-top: 1px solid #D8D8D8;
+    width: 97%;
+    margin-left:1.5%;
+    margin-right:1.5%;
+
+}
+
+
+table.draftlist td,th {
+    text-align:center;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+table.draftlist  td:first-child, th:first-child {
+    width: 10%;
+}
+
+table.alt-odd {
+    background-color: #F2F2F2;
+}

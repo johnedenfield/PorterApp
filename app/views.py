@@ -70,11 +70,47 @@ def draft_list():
         order_by(my_rating.c.Avg_Rating.desc()).all()
 
     draft_list = [dict(Beer_ID=beer[0], Beer=beer[1], Brewery=beer[2],
-                       BeerRating=beer[3], BeerRatingSite=beer[4],
+                       BeerRating=beer[3], RatingSite=beer[4],
                        MyRating=beer[5], MyRateCnt=beer[6], OthersRating=beer[7],
                        OthersRateCnt=beer[8]) for beer in rated_draft_list]
 
     return render_template('draft_list.html', draft_list=draft_list, current_user=current_user, updated=updated)
+
+
+@app.route("/all_drafts")
+@login_required
+def all_drafts():
+    # Returns the current beer list with the user ratings
+
+    my_rating = db.session.query(UserBeerList.Beer_ID,
+                                 db.func.avg(UserBeerList.Rating).label('Avg_Rating'),
+                                 db.func.count(UserBeerList.Rating).label('Avg_Rating_cnt')) \
+        .group_by(UserBeerList.Beer_ID). \
+        filter(UserBeerList.User_ID == current_user.get_id()).subquery()
+
+    others_rating = db.session.query(UserBeerList.Beer_ID,
+                                     db.func.avg(UserBeerList.Rating).label('Avg_Rating'),
+                                     db.func.count(UserBeerList.Rating).label('Avg_Rating_cnt')). \
+        group_by(UserBeerList.Beer_ID). \
+        filter(UserBeerList.User_ID != current_user.get_id()).subquery()
+
+    rated_draft_list = db.session.query(DraftList.Beer_ID, DraftList.Beer, DraftList.Brewery,
+                                        DraftList.BeerRating, DraftList.RatingSite,
+                                        DraftList.OnDraft,
+                                        my_rating.c.Avg_Rating.label('MyRating'),
+                                        my_rating.c.Avg_Rating_cnt.label('MyRatingCnt'),
+                                        others_rating.c.Avg_Rating.label('OtherRating'),
+                                        others_rating.c.Avg_Rating_cnt.label('OtherRatingCnt')). \
+        outerjoin(my_rating, DraftList.Beer_ID == my_rating.c.Beer_ID). \
+        outerjoin(others_rating, DraftList.Beer_ID == others_rating.c.Beer_ID). \
+        order_by(DraftList.Brewery).all()
+
+    draft_list = [dict(Beer_ID=beer[0], Beer=beer[1], Brewery=beer[2],
+                       BeerRating=beer[3], RatingSite=beer[4], OnDraft=beer[5],
+                       MyRating=beer[6], MyRateCnt=beer[7], OthersRating=beer[8],
+                       OthersRateCnt=beer[9]) for beer in rated_draft_list]
+    print draft_list
+    return render_template('all_drafts.html', draft_list=draft_list, current_user=current_user)
 
 
 @app.route('/rate_beer/<this_beer>', methods=['GET', 'POST'])

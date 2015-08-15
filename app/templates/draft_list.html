@@ -12,47 +12,85 @@
         <ul class="nav nav-pills">
             <li role="presentation" class="active"><a href="{{ url_for('draft_list') }}">On Draft</a></li>
             <li role="presentation"><a href="{{ url_for('favorite') }}">My Favorites</a></li>
+            <li role="presentation"><a href="{{ url_for('all_drafts') }}">All Drafts</a></li>
+
         </ul>
+    </div>
 
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th> Beer</th>
-                <th> Brewery</th>
-                <th> Rating </br> Me | Other | World</th>
+    <div class="panel-body">
+        {% for beer in draft_list %}
 
-            </tr>
-            </thead>
-            {% for beer in draft_list %}
-            <tr>
-                <td><a href="{{url_for('beer_info', this_beer = beer['Beer_ID'] )}}">{{beer['Beer']}}</a></td>
-                <td><a href="{{url_for('brewery', this_brewery = beer['Brewery'] )}}"> {{beer['Brewery']}}</a></td>
-                <td>
-                    <a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
+        <div class="row">
+            <table class="ondraftlist {{loop.cycle('alt-odd', 'alt-even')}}">
+                <tr>
+                    <th>
+                        <a href="{{url_for('brewery', this_brewery = beer['Brewery'] )}}"> {{beer['Brewery']}}</a>
+                    </th>
+
+                    <th>
+                        <a href="{{url_for('beer_info', this_beer = beer['Beer_ID'] )}}">{{beer['Beer']}}</a>
+                    </th>
+                </tr>
+
+                <tr>
+
+                    <td> My Rating</td>
+                    <td><a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
                         {% if beer['MyRating'] %}
                         {{ beer['MyRating'] }}
                         {% else %}
                         n/a
                         {% endif %}
                     </a>
-                    &nbsp|&nbsp
-                    {% if beer['OthersRating'] %}
-                    {{ beer['OthersRating'] }}
-                    {% else %}
-                    n/a
-                    {% endif %}
-                    &nbsp|&nbsp
-                    {% if beer['BeerRating'] %}
-                    <a href="{{beer['BeerRatingSite']}}"> {{beer['BeerRating']}}</a>
-                    {% else %}
-                    n/a
-                    {% endif %}
+                    </td>
+                </tr>
 
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        <p><em>Beer list was updated {{updated|timedelta}} minutes ago </em></p>
+                <tr>
+
+                    <td> Others Rating</td>
+                    <td>
+                        {% if beer['OthersRating'] %}
+                        {{ beer['OthersRating'] }}
+                        {% else %}
+                        n/a
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        {% if 'beeradvocate' in beer['RatingSite'] %}
+                        Beer Advocate
+                        {% elif 'ratebeer' in beer['RatingSite'] %}
+                        Rate Beer
+                        {% else %}
+                        No Rating Site
+                        {% endif %}
+                    </td>
+                    <td>
+
+                        <a href="{{beer['RatingSite']}}">
+                            {% if beer['BeerRating'] %}
+                            {{beer['BeerRating']}}
+                            {% else %}
+                            n/a
+                            {% endif %}
+                        </a>
+
+                    </td>
+
+                </tr>
+
+
+            </table>
+        </div>
+
+        {% endfor %}
+
+
+        <div class="panel-body">
+            <p><em>Beer list was updated {{updated|timedelta}} minutes ago </em></p>
+        </div>
     </div>
 
 </div>

@@ -9,17 +9,21 @@
 <div class="panel panel-default">
 
     <div class="panel-body">
-        <h2>{{ this_brewery }} </h2>
+        <ul class="nav nav-pills">
+            <li role="presentation"><a href="{{ url_for('draft_list') }}">On Draft</a></li>
+            <li role="presentation"><a href="{{ url_for('favorite') }}">My Favorites</a></li>
+            <li role="presentation" class="active"><a href="{{ url_for('all_drafts') }}">All Drafts</a></li>
 
+        </ul>
         <div class="panel-body">
-            {% for beer in brewery_list %}
+            {% for beer in draft_list %}
 
             <div class="row">
                 <table class="draftlist {{loop.cycle('alt-odd', 'alt-even')}}">
                     <tr>
                         <th>Draft</th>
                         <th>
-                            {{this_brewery}}
+                            <a href="{{url_for('brewery', this_brewery = beer['Brewery'] )}}"> {{beer['Brewery']}}</a>
                         </th>
 
                         <th>
@@ -91,7 +95,9 @@
 
 
         </div>
-    </div>
-</div>
 
+
+    </div>
+
+</div>
 {% endblock %}

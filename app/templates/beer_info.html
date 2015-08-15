@@ -46,8 +46,24 @@
                 <td>{{beer.ABV}}</td>
             </tr>
             <tr>
-                <td><a href="{{beer.RatingSite}}">Rating</a></td>
-                <td>{{beer.BeerRating}}</td>
+                <td>
+                    {% if 'beeradvocate' in beer.RatingSite %}
+                    Beer Advocate
+                    {% elif 'ratebeer' in beer.RatingSite %}
+                    Rate Beer
+                    {% else %}
+                    No Rating Site
+                    {% endif %}
+
+                </td>
+                <td><a href="{{beer.RatingSite}}">
+                    {% if beer.BeerRating %}
+                    {{beer.BeerRating}}
+                    {% else %}
+                    n/a
+                    {% endif %}
+                </a>
+                </td>
             </tr>
             <tr>
                 {% if beer.OnDraft ==1 %}

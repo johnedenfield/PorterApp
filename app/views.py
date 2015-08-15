@@ -39,8 +39,12 @@ def load_user(user_id):
     if user is not None:
         return user
 
-
 @app.route("/")
+def index():
+    return redirect(url_for('draft_list'))
+
+
+@app.route("/on_draft")
 @login_required
 def draft_list():
     # Returns the current beer list with the user ratings
@@ -67,7 +71,7 @@ def draft_list():
         filter(DraftList.OnDraft == 1). \
         outerjoin(my_rating, DraftList.Beer_ID == my_rating.c.Beer_ID). \
         outerjoin(others_rating, DraftList.Beer_ID == others_rating.c.Beer_ID). \
-        order_by(my_rating.c.Avg_Rating.desc()).all()
+        order_by(my_rating.c.Avg_Rating.desc(), DraftList.BeerRating.desc()).all()
 
     draft_list = [dict(Beer_ID=beer[0], Beer=beer[1], Brewery=beer[2],
                        BeerRating=beer[3], RatingSite=beer[4],
@@ -109,7 +113,7 @@ def all_drafts():
                        BeerRating=beer[3], RatingSite=beer[4], OnDraft=beer[5],
                        MyRating=beer[6], MyRateCnt=beer[7], OthersRating=beer[8],
                        OthersRateCnt=beer[9]) for beer in rated_draft_list]
-    print draft_list
+
     return render_template('all_drafts.html', draft_list=draft_list, current_user=current_user)
 
 
@@ -298,4 +302,4 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for('beer_list'))
+    return redirect(url_for('draft_list'))

@@ -19,9 +19,8 @@
             <tr>
                 <th> Beer</th>
                 <th> Brewery</th>
-                <th> Me</th>
-                <th> Others</th>
-                <th> RB/BA</th>
+                <th> Rating </br> Me | Other | World</th>
+
             </tr>
             </thead>
             {% for beer in draft_list %}
@@ -32,31 +31,24 @@
                     <a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
                         {% if beer['MyRating'] %}
                         {{ beer['MyRating'] }}
-                    {% else %}
+                        {% else %}
                         n/a
-                    {% endif %}
+                        {% endif %}
                     </a>
-                </td>
-
-                <td>
+                    &nbsp|&nbsp
                     {% if beer['OthersRating'] %}
                     {{ beer['OthersRating'] }}
                     {% else %}
                     n/a
                     {% endif %}
-                    </a>
-                </td>
-
-
-                <td>
+                    &nbsp|&nbsp
                     {% if beer['BeerRating'] %}
                     <a href="{{beer['BeerRatingSite']}}"> {{beer['BeerRating']}}</a>
                     {% else %}
                     n/a
                     {% endif %}
+
                 </td>
-
-
             </tr>
             {% endfor %}
         </table>

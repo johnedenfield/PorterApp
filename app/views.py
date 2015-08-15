@@ -246,7 +246,7 @@ def login():
 
         if user is not None and user.check_password(form.password.data):
             login_user(user)
-            return redirect(url_for('beer_list'))
+            return redirect(url_for('draft_list'))
         else:
             if user is None:
                 flash('User\'s email: %s cannot be found. Check your email address' % email, 'login')

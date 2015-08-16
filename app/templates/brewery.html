@@ -26,12 +26,12 @@
         <div class="row">
             <table class="draftlist {{loop.cycle('alt-odd', 'alt-even')}}">
                 <tr>
-                    <th>Draft</th>
-                    <th>
+                    <th class="first">Draft</th>
+                    <th class="second">
                         {{this_brewery}}
                     </th>
 
-                    <th>
+                    <th class="third">
                         <a href="{{url_for('beer_info', this_beer = beer['Beer_ID'] )}}">{{beer['Beer']}}</a>
                     </th>
                 </tr>

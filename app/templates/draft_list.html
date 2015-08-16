@@ -23,12 +23,12 @@
         <div class="row">
             <table class="draftlist {{loop.cycle('alt-odd', 'alt-even')}}">
                 <tr>
-                    <th> My Rating</th>
-                    <th>
+                    <th class="first"> My Rating</th>
+                    <th class="second">
                         <a href="{{url_for('brewery', this_brewery = beer['Brewery'] )}}"> {{beer['Brewery']}}</a>
                     </th>
 
-                    <th>
+                    <th class="third">
                         <a href="{{url_for('beer_info', this_beer = beer['Beer_ID'] )}}">{{beer['Beer']}}</a>
                     </th>
                 </tr>
@@ -36,12 +36,13 @@
                 <tr>
 
 
-                    <td rowspan="3"><a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
+                    <td rowspan="3">
+                        <a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
 
                         {% if beer['MyRating'] %}
                         <p class="lead">{{ beer['MyRating'] }}</p>
                         {% else %}
-                        rate
+                            Rate
                         {% endif %}
 
                     </a>
@@ -67,7 +68,7 @@
                         {% elif 'ratebeer' in beer['RatingSite'] %}
                         Rate Beer
                         {% else %}
-                        {{beer['RatingSite']}}
+                        {{beer['RatingSite'][7:17]+'...'}}
                         {% endif %}
                     </td>
                     <td>

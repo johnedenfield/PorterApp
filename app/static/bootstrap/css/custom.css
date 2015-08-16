@@ -25,15 +25,15 @@ table.draftlist td, th {
 }
 
 th.first {
-    width: 16%;
+    width: 20%;
 }
 
 th.second {
-    width: 37%;
+    width: 30%;
 }
 
 th.third {
-    width: 37%;
+    width: 30%;
 }
 
 table.alt-odd {

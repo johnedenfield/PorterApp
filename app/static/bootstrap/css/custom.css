@@ -6,7 +6,7 @@ Custom CSS for the My Beer Site
 /* Table */
 
 
- td{
+td {
     text-align:center;
 }
 
@@ -40,3 +40,5 @@ table.alt-odd {
     background-color: #FAFAFA;
 
 }
+
+

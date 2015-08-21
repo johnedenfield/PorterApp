@@ -54,3 +54,62 @@ function plot_beer_on_draft(beer, beer_data) {
 
     });
   }
+
+
+
+function plot_bac(beer_data) {
+
+
+    $('#chart').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Alcohol consumed  in the last 4 hours'
+        },
+
+        xAxis: {
+
+            categories:['Alcohol Consumed']
+
+        },
+        yAxis: {
+            title: {
+                text: 'Drunkenness ',
+
+
+            },
+            min: 0,
+            max: 10,
+            alternateGridColor:  '#FAFAFA',
+            allowDecimals: false,
+            categories: ['I could use a drink','Feeling Good','Slight Buzz',"I Shouldn't Drive","Work tomorrow..uh",
+             "Fuck Work!","Totally Can Drive","Brain Culler" ,"?","?", "Dead"]
+        },
+
+
+
+         plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                    style: {
+                        textShadow: '0 0 3px black'
+                    }
+                }
+            }
+        },
+
+        tooltip: {
+            pointFormat: '{series.name} :  {point.y}  <br/> Total: {point.stackTotal}'
+
+          },
+
+        series: beer_data
+
+
+
+    });
+  }

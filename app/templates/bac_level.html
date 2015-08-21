@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %} Beer List {% endblock %}
+
+{% block head %}
+
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="{{ url_for('static', filename='charts/charts.js')}}"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+        plot_bac({{my_drafts|tojson|safe}});
+	});
+
+
+</script>
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-default">
+
+    <div class="panel-body">
+    <div id ="chart"></div>
+
+    </div>
+
+</div>
+
+
+
+{% endblock %}

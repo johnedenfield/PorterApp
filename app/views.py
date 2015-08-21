@@ -250,6 +250,31 @@ def brewery(this_brewery):
     return render_template('brewery.html', brewery_list=brewery_list, this_brewery=this_brewery)
 
 
+@app.route('/BAC', methods=['GET'])
+@login_required
+def blood_alcohol_level():
+    recent_drafts = db.session.query(DraftList.ABV, DraftList.Volume, DraftList.Beer). \
+        join(UserBeerList, UserBeerList.Beer_ID == DraftList.Beer_ID). \
+        filter(UserBeerList.User_ID == current_user.get_id()). \
+        filter(UserBeerList.DateAndTime > datetime.utcnow() - timedelta(hours=4)).all()
+
+    my_drafts = []
+
+    for drafts in recent_drafts:
+        vol = ""
+        for s in drafts[1]:
+            if s.isdigit():
+                vol = vol + s
+
+        volume = int(vol)
+        al_int = int(float(drafts[0]) * volume)
+
+        alcohol = float(al_int) / 100
+        print alcohol
+        my_drafts.append(dict(name=drafts[2], data=[alcohol]))
+
+    return render_template('bac_level.html', my_drafts=my_drafts)
+
 # register / Login / Logout
 
 @app.route('/register', methods=['GET', 'POST'])

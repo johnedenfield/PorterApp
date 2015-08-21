@@ -11,7 +11,7 @@
             Out</a>
 
         <p class="navbar-text navbar-right" style="margin-right:10px">
-            Signed in as {{current_user.UserName}}</a></p>
+            Signed in as <a href="{{url_for('blood_alcohol_level')}}">{{current_user.UserName}}</a></p>
 
         {% else %}
         <a href="{{ url_for('login') }}" class="btn btn-default navbar-btn navbar-right" style="margin-right:10px">Sign

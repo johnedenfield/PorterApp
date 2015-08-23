@@ -57,10 +57,10 @@ function plot_beer_on_draft(beer, beer_data) {
 
 
 
-function plot_bac(beer_data) {
+function plot_bac(beer_data,selector) {
 
 
-    $('#chart').highcharts({
+    $(selector).highcharts({
         chart: {
             type: 'column'
         },
@@ -113,3 +113,50 @@ function plot_bac(beer_data) {
 
     });
   }
+
+
+function plot_beer_consumed(beer_data,selector){
+
+$(selector).highcharts({
+        chart: {
+            type: 'line'
+        },
+
+        title: {
+            text: 'Total Alcohol Consumed over time'
+        },
+
+        xAxis: {
+            type: 'datetime',
+            title: {
+                text: 'Date'
+            },
+            dateTimeLabelFormats: {
+                day: '%b %e'
+            }
+        },
+
+        yAxis: {
+            title: {
+                text: 'oz'
+            },
+        },
+
+        tooltip: {
+            headerFormat: '<b>{series.name}</b><br>',
+            pointFormat: '{point.x:%e. %b}: {point.y:.2f} oz'
+        },
+
+        plotOptions: {
+            line: {
+                marker: {
+                    enabled: false,
+
+                }
+            }
+        },
+
+        series: [beer_data]
+    });
+
+}

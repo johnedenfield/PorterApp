@@ -3,7 +3,6 @@
 
 function plot_beer_on_draft(beer, beer_data) {
 
-
     $('#chart').highcharts({
         chart: {
             type: 'spline'
@@ -56,7 +55,6 @@ function plot_beer_on_draft(beer, beer_data) {
   }
 
 function plot_bac(beer_data,selector) {
-
 
     $(selector).highcharts({
         chart: {

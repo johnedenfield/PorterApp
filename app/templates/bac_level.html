@@ -7,11 +7,10 @@
 <script src="{{ url_for('static', filename='charts/charts.js')}}"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
-        plot_bac({{my_drafts|tojson|safe}});
+        plot_bac({{my_drafts|tojson|safe}},"#chart1");
+        plot_beer_consumed({{all_my_drafts|tojson|safe}},"#chart2");
 	});
 
-
-</script>
 
 </script>
 
@@ -21,8 +20,11 @@
 <div class="panel panel-default">
 
     <div class="panel-body">
-    <div id ="chart"></div>
+        <div id="chart1"></div>
+    </div>
 
+    <div class="panel-body">
+        <div id="chart2"></div>
     </div>
 
 </div>

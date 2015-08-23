@@ -253,6 +253,16 @@ def brewery(this_brewery):
 @app.route('/BAC', methods=['GET'])
 @login_required
 def blood_alcohol_level():
+    def alcohol_content(volume_str, percent):
+        vol = ''
+        for s in volume_str:
+            if s.isdigit():
+                vol = vol + s
+
+        volume = int(vol)
+        alcohol_int = int(float(percent) * volume)
+        return float(alcohol_int) / 100
+
     recent_drafts = db.session.query(DraftList.ABV, DraftList.Volume, DraftList.Beer). \
         join(UserBeerList, UserBeerList.Beer_ID == DraftList.Beer_ID). \
         filter(UserBeerList.User_ID == current_user.get_id()). \
@@ -261,19 +271,25 @@ def blood_alcohol_level():
     my_drafts = []
 
     for drafts in recent_drafts:
-        vol = ""
-        for s in drafts[1]:
-            if s.isdigit():
-                vol = vol + s
-
-        volume = int(vol)
-        al_int = int(float(drafts[0]) * volume)
-
-        alcohol = float(al_int) / 100
-        print alcohol
+        alcohol = alcohol_content(drafts[1], drafts[0])
         my_drafts.append(dict(name=drafts[2], data=[alcohol]))
 
-    return render_template('bac_level.html', my_drafts=my_drafts)
+    all_drafts = db.session.query(DraftList.ABV, DraftList.Volume, DraftList.Beer, UserBeerList.DateAndTime). \
+        join(UserBeerList, UserBeerList.Beer_ID == DraftList.Beer_ID). \
+        filter(UserBeerList.User_ID == current_user.get_id()).order_by(UserBeerList.DateAndTime.asc()).all()
+
+    all_my_drafts = dict(name='All Drafts', data=[])
+    epoch = datetime.utcfromtimestamp(0)
+    alcohol = 0
+
+    for drafts in all_drafts:
+        alcohol = alcohol + alcohol_content(drafts[1], drafts[0])
+        dt = drafts[3] - epoch
+        dts = dt.total_seconds()
+
+        all_my_drafts['data'].append([dts * 1000, alcohol])
+
+    return render_template('bac_level.html', my_drafts=my_drafts, all_my_drafts=all_my_drafts)
 
 # register / Login / Logout
 

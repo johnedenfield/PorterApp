@@ -72,8 +72,6 @@ function plot_bac(beer_data,selector) {
         yAxis: {
             title: {
                 text: 'Drunkenness ',
-
-
             },
             min: 0,
             max: 10,
@@ -82,8 +80,6 @@ function plot_bac(beer_data,selector) {
             categories: ['I could use a drink','Feeling Good','Slight Buzz',"I Shouldn't Drive","Work tomorrow..uh",
              "Fuck Work!","Totally Can Drive","Brain Culler" ,"?","?", "Dead"]
         },
-
-
 
          plotOptions: {
             column: {
@@ -112,7 +108,7 @@ function plot_bac(beer_data,selector) {
 
 function plot_beer_consumed(beer_data,selector){
 
-$(selector).highcharts({
+	$(selector).highcharts({
         chart: {
             type: 'line'
         },

@@ -278,7 +278,7 @@ def blood_alcohol_level():
         join(UserBeerList, UserBeerList.Beer_ID == DraftList.Beer_ID). \
         filter(UserBeerList.User_ID == current_user.get_id()).order_by(UserBeerList.DateAndTime.asc()).all()
 
-    all_my_drafts = dict(name='All Drafts', data=[])
+    all_my_drafts = dict(name='All Drafts', data=[], step='right')
     epoch = datetime.utcfromtimestamp(0)
     alcohol = 0
 

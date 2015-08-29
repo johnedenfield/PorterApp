@@ -10,13 +10,13 @@
         <h4>My Ratings</h4>
 
         <p> A list of all the beers I have rated. </p>
-        <table class="table table-striped">
+        <table id="my_ratings" class="table table-striped">
             <thead>
             <tr>
-                <th> DateAndTime</th>
-                <th> Brewery</th>
-                <th> Beer</th>
-                <th> My Rating</th>
+                <th class="first"> DateAndTime</th>
+                <th class="second"> Brewery</th>
+                <th class="thrid"> Beer</th>
+                <th class="forth"> My Rating</th>
             </tr>
             </thead>
             {% for rating in ratings %}

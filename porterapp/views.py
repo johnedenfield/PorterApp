@@ -253,9 +253,9 @@ def brewery(this_brewery):
     return render_template('brewery.html', brewery_list=brewery_list, this_brewery=this_brewery)
 
 
-@app.route('/BAC', methods=['GET'])
+@app.route('/alcohol_consumed', methods=['GET'])
 @login_required
-def blood_alcohol_level():
+def alcohol_consumed():
     def alcohol_content(volume_str, percent):
         vol = ''
         for s in volume_str:
@@ -292,10 +292,25 @@ def blood_alcohol_level():
 
         all_my_drafts['data'].append([dts * 1000, alcohol])
 
-    return render_template('bac_level.html', my_drafts=my_drafts, all_my_drafts=all_my_drafts)
+    return render_template('alcohol_consumed.html', my_drafts=my_drafts, all_my_drafts=all_my_drafts)
+
+
+@app.route('/my_ratings', methods=['GET'])
+@login_required
+def my_ratings():
+    user_ratings = db.session.query(UserBeerList.DateAndTime, UserBeerList.Rating,
+                                    DraftList.Brewery, DraftList.Beer, DraftList.Beer_ID). \
+        join(DraftList, UserBeerList.Beer_ID == DraftList.Beer_ID). \
+        filter(UserBeerList.User_ID == current_user.get_id()). \
+        order_by(DraftList.Brewery.asc()).all()
+
+    ratings = [dict(DateAndTime=rating[0], Rating=rating[1], Brewery=rating[2],
+                    Beer=rating[3], Beer_ID=rating[4]) for rating in user_ratings]
+
+    return render_template('my_ratings.html', ratings=ratings)
+
 
 # register / Login / Logout
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     #  Creates a account user account

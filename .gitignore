@@ -15,7 +15,10 @@ README.txt
 # Compiled Files
 *.pyc
 
+# Config & Testing Files
+run.py
 config.py
+
 #Database Files
 *.db
 

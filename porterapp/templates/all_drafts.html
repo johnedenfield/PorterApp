@@ -9,14 +9,11 @@
 <div class="panel panel-default">
 
     <div class="panel-body">
-        <ul class="nav nav-pills">
-            <li role="presentation"><a href="{{ url_for('draft_list') }}">On Draft</a></li>
-            <li role="presentation"><a href="{{ url_for('favorite') }}">My Favorites</a></li>
-            <li role="presentation" class="active"><a href="{{ url_for('all_drafts') }}">All Drafts</a></li>
 
-        </ul>
-    </div>
-    <div class="panel-body">
+        <h4>All Drafts</h4>
+
+        <p>A list of all beers that have been on draft</p>
+
         {% for beer in draft_list %}
 
         <div class="row">

@@ -18,8 +18,11 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">{{ current_user.UserName}} <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-
-                        <li><a href="{{ url_for('blood_alcohol_level')}}">My BAC</a></li>
+                        <li><a href="{{ url_for('draft_list') }}">On Draft</a></li>
+                        <li><a href="{{ url_for('favorite') }}">My Favorites</a></li>
+                        <li><a href="{{ url_for('all_drafts') }}">All Drafts</a></li>
+                        <li><a href="{{ url_for('blood_alcohol_level')}}">Alcohol Consumed</a></li>
+                        <li role="separator" class="divider"></li>
                         <li><a href="{{ url_for('logout')}}">Log Out</a></li>
 
                     </ul>

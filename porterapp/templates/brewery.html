@@ -8,19 +8,12 @@
 
 <div class="panel panel-default">
 
-    <div class="panel-body">
-        <ul class="nav nav-pills">
-            <li role="presentation"><a href="{{ url_for('draft_list') }}">On Draft</a></li>
-            <li role="presentation"><a href="{{ url_for('favorite') }}">My Favorites</a></li>
-            <li role="presentation"><a href="{{ url_for('all_drafts') }}">All Drafts</a></li>
-            <li role="presentation" class="active">
-                <a href="{{ url_for('brewery', this_brewery = this_brewery) }}">{{ this_brewery }}</a>
-            </li>
-        </ul>
-    </div>
-
 
     <div class="panel-body">
+        <h4> {{ this_brewery }}</h4>
+
+        <p>A list of {{ this_brewery }}'s beers that have ever been on draft.</p>
+
         {% for beer in brewery_list %}
 
         <div class="row">

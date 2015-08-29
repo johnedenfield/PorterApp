@@ -10,19 +10,20 @@
 
     <div class="panel-body">
         <ul class="nav nav-pills">
-            <li role="presentation"><a href="{{ url_for('draft_list') }}">On Draft</a></li>
-            <li role="presentation" class="active"><a href="{{ url_for('favorite') }}">My Favorites</a></li>
+            <li role="presentation" class="active"><a href="{{ url_for('draft_list') }}">On Draft</a></li>
+            <li role="presentation"><a href="{{ url_for('favorite') }}">My Favorites</a></li>
             <li role="presentation"><a href="{{ url_for('all_drafts') }}">All Drafts</a></li>
 
         </ul>
     </div>
+
     <div class="panel-body">
-        {% for beer in favorite_drafts %}
+        {% for beer in draft_list %}
 
         <div class="row">
             <table class="draftlist {{loop.cycle('alt-odd', 'alt-even')}}">
                 <tr>
-                    <th class="first">On Draft</th>
+                    <th class="first">Rating</th>
                     <th class="second">
                         <a href="{{url_for('brewery', this_brewery = beer['Brewery'] )}}"> {{beer['Brewery']}}</a>
                     </th>
@@ -33,21 +34,17 @@
                 </tr>
 
                 <tr>
-                    <td rowspan="3">
-                        {% if beer['OnDraft']==1 %}
-                        <span class="glyphicon glyphicon-ok-circle" style="color:green"></span>
-                        {% else %}
-                        <span class="glyphicon glyphicon-ban-circle" style="color:red"></span>
-                        {% endif %}
-                    </td>
 
-                    <td> My Rating</td>
-                    <td><a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
+
+                    <td rowspan="3">
+                        <a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
+
                         {% if beer['MyRating'] %}
-                        {{ beer['MyRating'] }}
+                        <p class="lead">{{ beer['MyRating'] | round(1, 'floor') }}</p>
                         {% else %}
-                        n/a
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
                         {% endif %}
+
                     </a>
                     </td>
                 </tr>
@@ -71,7 +68,7 @@
                         {% elif 'ratebeer' in beer['RatingSite'] %}
                         Rate Beer
                         {% else %}
-                        {{beer['RatingSite']}}
+                        {{beer['RatingSite'][7:17]+'...'}}
                         {% endif %}
                     </td>
                     <td>
@@ -95,10 +92,10 @@
         {% endfor %}
 
 
+        <div class="panel-body">
+            <p><em>Beer list was updated {{updated|timedelta}} minutes ago </em></p>
+        </div>
     </div>
 
-
 </div>
-
-
 {% endblock %}

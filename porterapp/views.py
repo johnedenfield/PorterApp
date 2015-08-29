@@ -240,12 +240,15 @@ def brewery(this_brewery):
                                      db.func.avg(UserBeerList.Rating).label('OthersAvgRating')). \
         filter(UserBeerList.User_ID != current_user.get_id()).group_by(UserBeerList.Beer_ID).subquery()
 
-    brewery_list = db.session.query(DraftList.Beer_ID, DraftList.OnDraft,
+    drafts = db.session.query(DraftList.Beer_ID, DraftList.OnDraft,
                                     DraftList.Beer, DraftList.BeerRating, DraftList.RatingSite,
                                     my_rating.c.MyAvgRating, others_rating.c.OthersAvgRating). \
         filter(DraftList.Brewery == this_brewery). \
         outerjoin(my_rating, my_rating.c.Beer_ID == DraftList.Beer_ID). \
         outerjoin(others_rating, others_rating.c.Beer_ID == DraftList.Beer_ID).all()
+
+    brewery_list = [dict(Beer_ID=beer[0], OnDraft=beer[1], Beer=beer[2], BeerRating=beer[3],
+                            RatingSite=beer[4], MyRating=beer[5], OtherRating=beer[6]) for beer in drafts]
 
     return render_template('brewery.html', brewery_list=brewery_list, this_brewery=this_brewery)
 

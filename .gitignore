@@ -1,11 +1,22 @@
-#Files
-*.pyc
+# Directories
 .idea/*
-env/*
-flask_env/*
-config.py
+.cache/*
+.virtualenvs/*
 
-#Database files
+#hidden Files
+.bash_history
+.bashrc
+.gitconfig
+.profile
+.pythonstartup.py
+.vimrc
+README.txt
+
+# Compiled Files
+*.pyc
+
+config.py
+#Database Files
 *.db
 
 # OS Files

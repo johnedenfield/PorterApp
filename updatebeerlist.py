@@ -3,9 +3,7 @@ __author__ = 'johnedenfield'
 from lxml import html
 import requests
 from datetime import datetime
-from app.models import db, DraftList, DraftHistory
-from sqlalchemy import update
-
+from porterapp.models import db, DraftList, DraftHistory
 
 def scrape_draft_list():
     r = requests.get('http://www.theporterbeerbar.com/drink/beer')
@@ -39,6 +37,8 @@ def scrape_draft_list():
 
         elif 'ratebeer' in url:
             rating = scrape_rate_beer(url)
+        else:
+            rating = None
 
         draft_beer = DraftList.query.filter(DraftList.Beer_ID == beer_id).first()
 

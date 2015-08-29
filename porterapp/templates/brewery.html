@@ -12,19 +12,23 @@
         <ul class="nav nav-pills">
             <li role="presentation"><a href="{{ url_for('draft_list') }}">On Draft</a></li>
             <li role="presentation"><a href="{{ url_for('favorite') }}">My Favorites</a></li>
-            <li role="presentation" class="active"><a href="{{ url_for('all_drafts') }}">All Drafts</a></li>
-
+            <li role="presentation"><a href="{{ url_for('all_drafts') }}">All Drafts</a></li>
+            <li role="presentation" class="active">
+                <a href="{{ url_for('brewery', this_brewery = this_brewery) }}">{{ this_brewery }}</a>
+            </li>
         </ul>
     </div>
+
+
     <div class="panel-body">
-        {% for beer in draft_list %}
+        {% for beer in brewery_list %}
 
         <div class="row">
             <table class="draftlist {{loop.cycle('alt-odd', 'alt-even')}}">
                 <tr>
-                    <th class="first">On Draft</th>
+                    <th class="first">Draft</th>
                     <th class="second">
-                        <a href="{{url_for('brewery', this_brewery = beer['Brewery'] )}}"> {{beer['Brewery']}}</a>
+                        {{this_brewery}}
                     </th>
 
                     <th class="third">
@@ -44,7 +48,7 @@
                     <td> My Rating</td>
                     <td><a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
                         {% if beer['MyRating'] %}
-                        {{ beer['MyRating'] }}
+                        {{ beer['MyRating'] | round(1, 'floor') }}
                         {% else %}
                         n/a
                         {% endif %}
@@ -96,8 +100,6 @@
 
 
     </div>
-
-
 </div>
 
 {% endblock %}

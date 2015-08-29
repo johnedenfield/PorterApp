@@ -10,28 +10,35 @@
         <h4>My Ratings</h4>
 
         <p> A list of all the beers I have rated. </p>
-        <table id="my_ratings" class="table table-striped">
-            <thead>
-            <tr>
-                <th class="first"> DateAndTime</th>
-                <th class="second"> Brewery</th>
-                <th class="thrid"> Beer</th>
-                <th class="forth"> My Rating</th>
-            </tr>
-            </thead>
+
+        <div class="row">
             {% for rating in ratings %}
-            <tr>
-                <td>{{rating.DateAndTime | datetimeformat }}</td>
-                <td>{{rating.Brewery}}</td>
-                <td><a href="{{url_for('beer_info', this_beer = rating.Beer_ID )}}">{{rating.Beer}}</a></td>
-                <td>{{rating.Rating}}</td>
+            <table class="draftlist {{loop.cycle('alt-odd', 'alt-even')}}">
 
-            </tr>
+                <tr>
+                    <th>Date</th>
+                    <td>{{rating.DateAndTime | datetimeformat }}</td>
+                </tr>
+                <tr>
+                    <th>Brewery</th>
+                    <td>{{rating.Brewery}}</td>
+                </tr>
+                <tr>
+                    <th>Beer</th>
+                    <td><a href="{{url_for('beer_info', this_beer = rating.Beer_ID )}}">{{rating.Beer}}</a></td>
+                </tr>
+                <tr>
+                    <th>Rating</th>
+                    <td>{{rating.Rating}}</td>
+
+                </tr>
+
+            </table>
             {% endfor %}
-        </table>
+
+
+        </div>
     </div>
-
 </div>
-
 
 {% endblock %}

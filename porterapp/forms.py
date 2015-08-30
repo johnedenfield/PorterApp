@@ -28,6 +28,4 @@ class RateBeerForm(Form):
 
 class DeleteRatingForm(Form):
     id = HiddenField('ID')
-
-
-
+    url = HiddenField('Url')

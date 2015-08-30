@@ -146,16 +146,19 @@ def rate_beer(this_beer):
         return render_template('rate_beer.html', rate_form=rate_form, beer=beer)
 
 
-@app.route('/delete_rating/<this_beer>', methods=['POST'])
+@app.route('/delete_rating', methods=['POST'])
 @login_required
-def delete_rating(this_beer):
+def delete_rating():
     form = DeleteRatingForm(request.form)
 
     if form.validate_on_submit():
+
         UserBeerList.query.filter(UserBeerList.ID == form.id.data).delete()
+
         db.session.commit()
 
-    return redirect(url_for('beer_info', this_beer=this_beer))
+        return redirect(form.url.data)
+
 
 
 @app.route('/beer/<this_beer>', methods=['GET'])
@@ -167,10 +170,11 @@ def beer_info(this_beer):
         filter(UserBeerList.Beer_ID == this_beer).order_by(UserBeerList.DateAndTime.desc()).all()
 
     delete_form = []
-    for r in my_ratings:
-        d_form = DeleteRatingForm()
-        d_form.id.data = r.ID
-        delete_form.append(d_form)
+    for rating in my_ratings:
+        form = DeleteRatingForm()
+        form.id.data = rating.ID
+        form.url.data = url_for('beer_info', this_beer=this_beer)
+        delete_form.append(form)
 
     # Trend Time on draft for last 30 days
     start_date = datetime.utcnow() - timedelta(days=30)
@@ -299,13 +303,20 @@ def alcohol_consumed():
 @login_required
 def my_ratings():
     user_ratings = db.session.query(UserBeerList.DateAndTime, UserBeerList.Rating,
-                                    DraftList.Brewery, DraftList.Beer, DraftList.Beer_ID). \
+                                    DraftList.Brewery, DraftList.Beer, DraftList.Beer_ID, UserBeerList.ID). \
         join(DraftList, UserBeerList.Beer_ID == DraftList.Beer_ID). \
         filter(UserBeerList.User_ID == current_user.get_id()). \
         order_by(DraftList.Brewery.asc()).all()
 
-    ratings = [dict(DateAndTime=rating[0], Rating=rating[1], Brewery=rating[2],
-                    Beer=rating[3], Beer_ID=rating[4]) for rating in user_ratings]
+    ratings = []
+    for rating in user_ratings:
+        delete_form = DeleteRatingForm()
+        delete_form.id.data = rating[5]
+        delete_form.url.data = url_for('my_ratings')
+        ratings.append(dict(DateAndTime=rating[0], Rating=rating[1], Brewery=rating[2],
+                            Beer=rating[3], Beer_ID=rating[4], form=delete_form))
+
+
 
     return render_template('my_ratings.html', ratings=ratings)
 

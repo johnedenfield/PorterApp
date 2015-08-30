@@ -18,14 +18,27 @@
                 <tr>
                     <th>Date</th>
                     <td>{{rating.DateAndTime | datetimeformat }}</td>
+                    <td> Delete</td>
+
                 </tr>
                 <tr>
                     <th>Brewery</th>
                     <td>{{rating.Brewery}}</td>
+                    <td rowspan="2">
+                        <form method=post action="{{url_for('delete_rating')}}">
+                            {{rating.form.hidden_tag()}}
+                            {{rating.form.id()}}
+                            {{rating.form.url()}}
+                            <button class="btn btn-default" type="submit" value="Delete">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 <tr>
                     <th>Beer</th>
                     <td><a href="{{url_for('beer_info', this_beer = rating.Beer_ID )}}">{{rating.Beer}}</a></td>
+
                 </tr>
                 <tr>
                     <th>Rating</th>

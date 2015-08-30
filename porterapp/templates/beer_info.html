@@ -101,7 +101,7 @@
                 <td>{{rating.DateAndTime | datetimeformat }}</td>
                 <td>{{rating.Rating}}</td>
                 <td>
-                    <form method=post action="{{url_for('delete_rating',this_beer=beer.Beer_ID)}}">
+                    <form method=post action="{{url_for('delete_rating')}}">
                         {{delete_form[loop.index0].hidden_tag()}}
                         {{delete_form[loop.index0].id()}}
                         <button class="btn btn-default" type="submit" value="Delete">

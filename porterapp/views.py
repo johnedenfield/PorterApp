@@ -321,6 +321,14 @@ def my_ratings():
     return render_template('my_ratings.html', ratings=ratings)
 
 
+@app.route('/new_drafts', methods=['GET'])
+@login_required
+def new_drafts():
+    updated = db.session.query(db.func.max(DraftList.Updated)).filter(DraftList.OnDraft == 1).scalar()
+    new_beer = DraftList.query.filter(DraftList.NotifyUser == 1).all()
+
+    return render_template('new_drafts.html', new_beer=new_beer, updated=updated)
+
 # register / Login / Logout
 @app.route('/register', methods=['GET', 'POST'])
 def register():

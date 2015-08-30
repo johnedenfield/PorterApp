@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %} Beer List {% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="panel panel-default">
+
+
+    <div class="panel-body">
+        <h4> New Drafts</h4>
+
+        <p>A list of beers just added to the draft list. This list was updated <em>{{updated|timedelta}}</em> minutes
+            ago. </p>
+
+        {% for beer in new_beer %}
+
+        <div class="row">
+            <table class="draftlist {{loop.cycle('alt-odd', 'alt-even')}}">
+                <tr>
+                    <th class="first">Rating</th>
+                    <th class="second">
+                        <a href="{{url_for('brewery', this_brewery = beer['Brewery'] )}}"> {{beer['Brewery']}}</a>
+                    </th>
+
+                    <th class="third">
+                        <a href="{{url_for('beer_info', this_beer = beer['Beer_ID'] )}}">{{beer['Beer']}}</a>
+                    </th>
+                </tr>
+
+                <tr>
+
+
+                    <td rowspan="2">
+                        <a href="{{url_for('rate_beer', this_beer =beer['Beer_ID'])}}">
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </a>
+                    </td>
+                </tr>
+
+
+                {% if beer['RatingSite'] %}
+                <tr>
+                    <td>
+                        {% if 'beeradvocate' in beer['RatingSite'] %}
+                        Beer Advocate
+                        {% elif 'ratebeer' in beer['RatingSite'] %}
+                        Rate Beer
+                        {% else %}
+                        {{beer['RatingSite'][7:17]+'...'}}
+                        {% endif %}
+                    </td>
+                    <td>
+
+                        <a href="{{beer['RatingSite']}}">
+                            {% if beer['BeerRating'] %}
+                            {{beer['BeerRating']}}
+                            {% else %}
+                            n/a
+                            {% endif %}
+                        </a>
+
+                    </td>
+
+                </tr>
+                {% endif %}
+
+            </table>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+{% endblock %}

@@ -50,6 +50,9 @@ def scrape_draft_list():
                                    RatingSite=url, NotifyUser=1)
         else:
 
+            if draft_beer.NotifyUser == 1:
+                draft_beer.NotifyUser = 0
+
             if draft_beer.OnDraft == 0:
                 draft_beer.NotifyUser = 1
 
@@ -73,6 +76,7 @@ def scrape_draft_list():
     draft_list = DraftList.query.filter(DraftList.Updated != dte).all()
     for beer in draft_list:
         beer.OnDraft = 0
+        beer.NotifyUser = 0
         db.session.add(beer)
 
     db.session.commit()
